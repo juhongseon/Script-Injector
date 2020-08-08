@@ -1,0 +1,20 @@
+{
+    "name": "Script Injector",
+    "version": "1.0",
+    "description": "Script Injector",
+    "permissions": ["declarativeContent","storage"],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "page_action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "512": "logo-512.png"
+        }
+    },
+    "icons": {
+        "512": "logo-512.png"
+    },
+    "manifest_version": 2
+}
