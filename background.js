@@ -1,3 +1,5 @@
+'use strict'
+
 chrome.runtime.onInstalled.addListener(function() {
     chrome.storage.local.get(['siData'],(obj)=>{
         try {
@@ -11,7 +13,7 @@ chrome.runtime.onInstalled.addListener(function() {
                         {
                             id : 1,
                             title : 'sample title',
-                            script : 'sample script',
+                            script : 'console.log("sample script")',
                             enable : false
                         }
                     ]
