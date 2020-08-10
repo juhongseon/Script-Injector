@@ -26,6 +26,7 @@ window.onload = ()=>{
 
                 newItems.map((item,idx)=>{
                     if(item.enable===true) {
+                        if(item.title!==oldItems[idx].title) return
                         if(oldItems[idx].enable===true) {
                             document.getElementById('script'+item.id).remove()
                         }

@@ -15,6 +15,19 @@ window.onload = ()=>{
         document.getElementById('img-copyright').style.display = 'none'
     }
 
+    // Remove from siData.items by id
+    const removeData = (id)=>{
+        chrome.storage.local.get(['siData'],(obj)=>{
+            const origin = obj.siData
+            const modified = {
+                idSequence : origin.idSequence,
+                items : origin.items.filter(item=>item.id!=id)
+            }
+
+            chrome.storage.local.set({siData:modified})
+        })
+    }
+
     // Modify local chrome storage data
     const modifySiData = (id,column,data)=>{
         chrome.storage.local.get(['siData'],(obj)=>{
@@ -22,7 +35,6 @@ window.onload = ()=>{
             const modified = {
                 idSequence : origin.idSequence,
                 items : origin.items.map((item)=>{
-                    console.log(item)
                     if(item.id==id) return {
                         id : item.id, title : item.title,
                         script : item.script, enable : item.enable,
@@ -34,17 +46,12 @@ window.onload = ()=>{
 
             chrome.storage.local.set({siData:modified})
         })
-
-        document.getElementById('disabled'+id).style.display = 'inline'
-        document.getElementById('enabled'+id).style.display = 'none'
     }
 
     // Return div mainRow
     const mainRow = (id,title,script,enable)=>{
         let result = document.createElement('div')
-
-        let i = document.getElementsByClassName('titleP').length
-
+        result.id = 'div'+id
             let titleP = document.createElement('p')
             titleP.className = 'titleP'
                 let number = document.createElement('span')
@@ -155,6 +162,11 @@ window.onload = ()=>{
                 confirm.style.color = 'white'
                 confirm.innerText = 'Confirm'
                 titleP.appendChild(confirm)
+                confirm.onclick = (e)=>{
+                    let id = e.target.id.replace('confirm','')
+                    removeData(id)
+                    document.getElementById('div'+id).remove()
+                }
             result.appendChild(titleP)
 
             let editP = document.createElement('p')
@@ -187,9 +199,22 @@ window.onload = ()=>{
                 editP.appendChild(editSave)
                 editSave.onclick = (e)=>{
                     let id = e.target.id.replace('editSave','')
+
+                    let modifiedTitle = document.getElementById('titleEdit'+id).value
+                    document.getElementById('titleElmt'+id).innerText = modifiedTitle
+                    modifySiData(id,'title',modifiedTitle)
+                    
+                    let modifiedScript = document.getElementById('scriptEdit'+id).value
+                    document.getElementById('scriptP'+id).innerText = modifiedScript
+                    setTimeout(()=>{modifySiData(id,'script',modifiedScript)},100)
+
                     document.getElementById('editSave'+id).style.display = 'none'
                     document.getElementById('editCancel'+id).style.display = 'none'
                     document.getElementById('edit'+id).style.display = 'inline'
+                    document.getElementById('titleEdit'+id).style.display = 'none'
+                    document.getElementById('scriptEdit'+id).style.display = 'none'
+                    document.getElementById('titleElmt'+id).style.display = 'inline'
+                    document.getElementById('scriptP'+id).style.display = 'block'
                 }
 
                 let editCancel = document.createElement('button')
@@ -201,9 +226,17 @@ window.onload = ()=>{
                 editP.appendChild(editCancel)
                 editCancel.onclick = (e)=>{
                     let id = e.target.id.replace('editCancel','')
+
+                    document.getElementById('titleEdit'+id).value = document.getElementById('titleElmt'+id).innerText
+                    document.getElementById('scriptEdit'+id).value = document.getElementById('scriptP'+id).innerText
+
                     document.getElementById('editSave'+id).style.display = 'none'
                     document.getElementById('editCancel'+id).style.display = 'none'
                     document.getElementById('edit'+id).style.display = 'inline'
+                    document.getElementById('titleEdit'+id).style.display = 'none'
+                    document.getElementById('scriptEdit'+id).style.display = 'none'
+                    document.getElementById('titleElmt'+id).style.display = 'inline'
+                    document.getElementById('scriptP'+id).style.display = 'block'
                 }
             result.appendChild(editP)
 
